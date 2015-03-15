@@ -8,10 +8,16 @@ object BloomFilterSpec {
       (0 until k).map { i: Int => { str: String => ((str + i).hashCode % n + n) % n } }
     }
   }
+
+  class BadFilter(val n: Int, val k: Int) extends ParallelBloomFilter[String](n, k) {
+    override def buildHashes(k: Int): Seq[(String) => Int] = {
+      (0 to k).map { i: Int => { str: String => str.hashCode } }
+    }
+  }
 }
 
 class BloomFilterSpec extends FlatSpec with Matchers {
-  import io.github.rpless.filters.BloomFilterSpec.ExampleFilter
+  import io.github.rpless.filters.BloomFilterSpec._
 
   val testString1 = "Hello"
   val testString2 = "World"
@@ -35,5 +41,9 @@ class BloomFilterSpec extends FlatSpec with Matchers {
     filter.add(testString2)
     filter.check(testString1) should be (true)
     filter.check(testString2) should be (true)
+  }
+
+  it should "raise an IllegalArgumentException if the incorrect number of hash functions is generated" in {
+    a [IllegalArgumentException] should be thrownBy (new BadFilter(1000, 10))
   }
 }
