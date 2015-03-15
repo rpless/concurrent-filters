@@ -7,8 +7,17 @@ import scala.concurrent.{Await, Future, Promise}
 import scala.util.{Failure, Success, Try}
 import scala.concurrent.ExecutionContext.Implicits.global
 
+/**
+ * A set of utilities for dealing with sequences of Futures.
+ */
 private[filters] object FutureUtil {
 
+  /**
+   * Take a sequence of Futures that return booleans and validate that they all return true.
+   *
+   * @param fs The sequence of futures to execute
+   * @return Returns true if all of the Future values are true.
+   */
   def forAllResults(fs: Seq[Future[Boolean]]): Boolean = {
     val remaining = new AtomicInteger(fs.length)
     val promise: Promise[Boolean] = Promise[Boolean]()
@@ -25,7 +34,14 @@ private[filters] object FutureUtil {
     Await.result(promise.future, Duration.Inf)
   }
 
-  def awaitAll[T](fs: Seq[Future[T]]): Future[T] = {
+  /**
+   * Wait for all of the futures to complete.
+   *
+   * @param fs The sequence of futures to execute
+   * @tparam T Return type of the Future
+   * @return Returns the result of the last future to be executed
+   */
+  def awaitAll[T](fs: Seq[Future[T]]): T = {
     val remaining = new AtomicInteger(fs.length)
     val promise: Promise[T] = Promise[T]()
 
@@ -38,6 +54,6 @@ private[filters] object FutureUtil {
         case f @ Failure(_) => promise.tryComplete(f)
       }
     }
-    promise.future
+    Await.result(promise.future, Duration.Inf)
   }
 }
