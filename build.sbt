@@ -1,10 +1,10 @@
 
-val parallelFilters = project.in(file("."))
+val concurrentFilters = project.in(file("."))
   .settings(baseSettings: _*)
   .settings(compilerOptions: _*)
 
 lazy val baseSettings = Seq(
-  name := "parallel-filters",
+  name := "concurrent-filters",
   organization := "io.github.rpless",
   version := "0.1.0",
   scalaVersion := "2.11.6",

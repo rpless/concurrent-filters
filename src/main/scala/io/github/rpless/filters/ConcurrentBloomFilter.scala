@@ -3,14 +3,14 @@ package io.github.rpless.filters
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
-/** A Bloom Filter implementation that parallelizes all of the hash
- * function evaluations when calling '''add''' and '''check'''.
+/** A Bloom Filter implementation that evaluates its hash functions concurrently
+ *  when calling '''add''' and '''check'''.
  *
  * @param n The size of the filter
  * @param k The number of hash functions to use
  * @tparam T The type of object that is inserted into the filter.
  */
-abstract class ParallelBloomFilter[T](n: Int, k: Int) {
+abstract class ConcurrentBloomFilter[T](n: Int, k: Int) {
   private[this] val filter = new Array[Boolean](n)
   private[this] val hashes = generateKHashes(k)
 

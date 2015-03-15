@@ -3,13 +3,13 @@ package io.github.rpless.filters
 import org.scalatest.{FlatSpec, Matchers}
 
 object BloomFilterSpec {
-  class ExampleFilter(val n: Int, val k: Int) extends ParallelBloomFilter[String](n, k) {
+  class ExampleFilter(val n: Int, val k: Int) extends ConcurrentBloomFilter[String](n, k) {
     override def buildHashes(k: Int): Seq[(String) => Int] = {
       (0 until k).map { i: Int => { str: String => ((str + i).hashCode % n + n) % n } }
     }
   }
 
-  class BadFilter(val n: Int, val k: Int) extends ParallelBloomFilter[String](n, k) {
+  class BadFilter(val n: Int, val k: Int) extends ConcurrentBloomFilter[String](n, k) {
     override def buildHashes(k: Int): Seq[(String) => Int] = {
       (0 to k).map { i: Int => { str: String => str.hashCode } }
     }
@@ -22,7 +22,7 @@ class BloomFilterSpec extends FlatSpec with Matchers {
   val testString1 = "Hello"
   val testString2 = "World"
 
-  "A Parallel Bloom Filter" should "check as true if the element has been added" in {
+  "A ConcurrentBloomFilter" should "check as true if the element has been added" in {
     val filter = new ExampleFilter(1000, 10)
     filter.add(testString1)
     filter.check(testString1) should be (true)

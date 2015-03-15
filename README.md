@@ -1,4 +1,4 @@
-Parallel Filters
+concurrent Filters
 ================
 
-A couple of parallel filters written Scala.
+A couple of concurrent filters written Scala.
